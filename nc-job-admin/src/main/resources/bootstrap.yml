@@ -1,0 +1,13 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: @artifactId@
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+
+

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhw.nc.job.admin.mapper.NcJobInfoMapper">
+
+    <resultMap id="getInfo" type="com.yhw.nc.job.admin.core.model.NcJobInfo">
+        <id column="id" property="id"/>
+        <result column="jobGroupId" property="jobGroupId"/>
+        <result column="jobCron" property="jobCron"/>
+        <result column="jobDesc" property="jobDesc"/>
+        <result column="alarmEmail" property="alarmEmail"/>
+        <result column="routeStrategy" property="routeStrategy"/>
+        <result column="executorParam" property="executorParam"/>
+        <result column="executorFailRetryCount" property="executorFailRetryCount"/>
+        <result column="triggerStatus" property="triggerStatus"/>
+        <result column="triggerLastTime" property="triggerLastTime"/>
+        <result column="triggerNextTime" property="triggerNextTime"/>
+
+        <result column="createBy" property="createBy"/>
+        <result column="updateBy" property="updateBy"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="remark" property="remark"/>
+        <result column="hasDelete" property="hasDelete"/>
+    </resultMap>
+
+    <sql id="getAll">
+        nji.id id,
+        nji.id jobGroupId,
+        nji.job_cron jobCron,
+        nji.job_desc jobDesc,
+        nji.alarm_email alarmEmail,
+        nji.route_strategy routeStrategy,
+        nji.executor_param executorParam,
+        nji.executor_fail_retry_count executorFailRetryCount,
+        nji.trigger_status triggerStatus,
+        nji.trigger_last_time triggerLastTime,
+        nji.trigger_next_time triggerNextTime,
+        nji.create_by createBy,
+        nji.update_by updateBy,
+        nji.create_time createTime,
+        nji.update_time updateTime,
+        nji.remark remark,
+        nji.has_delete hasDelete
+    </sql>
+
+    <select id="scheduleJobQuery">
+        select
+            <include refid="getAll" />
+        from
+            nc_job_info nji
+        where
+            nji.job_cron
+    </select>
+
+    <update id="scheduleUpdate" parameterType="com.yhw.nc.job.admin.core.model.NcJobInfo">
+        UPDATE nc_job_info
+		SET
+			trigger_last_time = #{triggerLastTime},
+			trigger_next_time = #{triggerNextTime},
+			trigger_status = #{triggerStatus}
+		WHERE id = #{id}
+    </update>
+
+</mapper>
