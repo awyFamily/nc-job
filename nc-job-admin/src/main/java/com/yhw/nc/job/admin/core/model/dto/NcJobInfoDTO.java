@@ -18,7 +18,7 @@ public class NcJobInfoDTO {
      */
     @NotNull
     @ApiModelProperty(value = "执行器主键ID")
-    private int jobGroupId;
+    private Integer jobGroupId;
 
     /**
      * 任务执行CRON表达式

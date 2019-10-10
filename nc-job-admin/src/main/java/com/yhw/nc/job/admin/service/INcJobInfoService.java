@@ -7,6 +7,9 @@ import com.yhw.nc.job.api.dto.CallbackDTO;
 
 import java.util.List;
 
+/**
+ * @author yhw
+ */
 public interface INcJobInfoService extends IService<NcJobInfo> {
 
     Integer addInfo(NcJobInfoDTO dto);

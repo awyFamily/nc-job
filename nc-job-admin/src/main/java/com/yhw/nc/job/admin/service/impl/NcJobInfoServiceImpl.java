@@ -32,9 +32,12 @@ public class NcJobInfoServiceImpl extends ServiceImpl<NcJobInfoMapper, NcJobInfo
                         .getNextValidTimeAfter(new Date())
                         .getTime();
                 ncJobInfo.setTriggerNextTime(triggerNextTime);
+                ncJobInfo.setTriggerStatus(0);
             }catch (Exception e){
                 throw new RuntimeException("cron 表达式错误!");
             }
+        }else {
+            ncJobInfo.setTriggerStatus(2);
         }
         this.save(ncJobInfo);
         return ncJobInfo.getId();
@@ -55,9 +58,13 @@ public class NcJobInfoServiceImpl extends ServiceImpl<NcJobInfoMapper, NcJobInfo
                         .getNextValidTimeAfter(new Date())
                         .getTime();
                 jobInfo.setTriggerNextTime(triggerNextTime);
+                jobInfo.setTriggerStatus(0);
             }catch (Exception e){
                 throw new RuntimeException("cron 表达式错误!");
             }
+        }
+        if(StrUtil.isEmpty(dto.getJobCron())){
+            jobInfo.setTriggerStatus(2);
         }
         this.updateById(jobInfo);
         return true;
@@ -67,7 +74,9 @@ public class NcJobInfoServiceImpl extends ServiceImpl<NcJobInfoMapper, NcJobInfo
     public boolean updateCallback(CallbackDTO callbackDTO) {
         NcJobInfo jobInfo = this.getById(callbackDTO.getJobId());
         Assert.isFalse(jobInfo == null,"job not exists");
-        jobInfo.setTriggerStatus(0);
+        if(jobInfo.getTriggerStatus() != 2 ){
+            jobInfo.setTriggerStatus(0);
+        }
         this.updateById(jobInfo);
         return true;
     }

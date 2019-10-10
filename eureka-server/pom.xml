@@ -8,7 +8,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>eurake-server</artifactId>
+    <artifactId>eureka-server</artifactId>
     <version>1.0.0</version>
     <name>eurake-server</name>
     <description>Demo project for Spring Boot</description>

@@ -5,16 +5,19 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author yhw
+ */
 @Data
 public class NcJobInfo {
 
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     /**
      * 执行器主键ID
      */
-    private int jobGroupId;
+    private Integer jobGroupId;
 
     /**
      * 任务执行CRON表达式
@@ -71,7 +74,7 @@ public class NcJobInfo {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
-    private String remark;
+    private String remarks;
 
     @TableLogic
     private Integer hasDelete;

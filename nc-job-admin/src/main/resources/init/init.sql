@@ -1,4 +1,4 @@
-DROP TABLE `nc_job_info`
+DROP TABLE `nc_job_info`;
 CREATE TABLE `nc_job_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `job_group_id` int(11) NOT NULL COMMENT '执行器主键ID',
@@ -8,16 +8,19 @@ CREATE TABLE `nc_job_info` (
   `route_strategy` TINYINT(1) DEFAULT NULL COMMENT '执行器路由策略',
   `executor_param` varchar(512) DEFAULT NULL COMMENT '执行器任务参数',
   `executor_fail_retry_count` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '失败重试次数',
-  `trigger_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '调度状态：0-停止，1-运行',
+  `trigger_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '调度状态：0-停止，1-运行 2-手动执行',
   `trigger_last_time` bigint(13) NOT NULL DEFAULT '0' COMMENT '上次调度时间',
   `trigger_next_time` bigint(13) NOT NULL DEFAULT '0' COMMENT '下次调度时间',
   `create_by` varchar(32) NULL DEFAULT ''	COMMENT '创建人',
   `update_by` varchar(32)  NULL DEFAULT '' COMMENT '修改时间',
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
+	`has_delete` tinyint(1) DEFAULT '0' COMMENT '逻辑删除 0-正常 1-删除',
+	`remarks` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE `nc_job_group`;
 CREATE TABLE `nc_job_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server_id` varchar(64) NOT NULL COMMENT '执行器主键ID',
@@ -27,7 +30,7 @@ CREATE TABLE `nc_job_group` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE `nc_job_log`
+DROP TABLE `nc_job_log`;
 CREATE TABLE `nc_job_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `job_info_id` int(11) NOT NULL COMMENT '执行器主键ID',
@@ -39,3 +42,10 @@ CREATE TABLE `nc_job_log` (
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `nc_job_lock` (
+  `lock_name` varchar(50) NOT NULL COMMENT '锁名称',
+  PRIMARY KEY (`lock_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `nc_job_lock` ( `lock_name`) VALUES ( 'schedule_lock');

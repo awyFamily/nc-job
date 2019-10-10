@@ -58,11 +58,15 @@ public class InitRegistry implements ApplicationListener<ApplicationReadyEvent> 
         try{
             initCommand();
             String jobServerId = jobProviderPreperties.getJobServerId();
+            if(jobServerId == null || jobServerId.isEmpty()){
+                throw new RuntimeException("nc.job.provider.jobServerId  can not be empty");
+            }
             RegistryDTO registryDTO = new RegistryDTO(jobServerId, NcTaskManager.getInstance().getNames());
             jobAdminCallback.registry(registryDTO);
             log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task  success ");
         }catch (Exception e){
             log.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task  error ",e);
+            System.exit(0);
         }
         log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task end");
     }
