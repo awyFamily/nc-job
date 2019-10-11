@@ -91,20 +91,25 @@ public class InitRegistry implements ApplicationListener<ApplicationReadyEvent>,
     private void startHeartbeat(){
 
         heartbeatThread = new Thread(() -> {
+
+            log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> heartbeat task begin");
+
             while (!heartbeatThreadStop){
                 sleepTime(TimeUnit.MINUTES, CommonConstant.DEFAULT_EXECUTOR_HEARTBEAT_TIME);
-                log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> heartbeat task end");
 
                 String jobServerId = jobProviderPreperties.getJobServerId();
 
                 try{
                     registry(jobServerId);
+                    log.info("heartbeat send success ");
                 }catch (Exception e){
-                    log.info("heartbeat task error ",e);
+                    log.error("heartbeat send error ",e);
                 }
 
-                log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> heartbeat task end");
             }
+
+            log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> heartbeat task end");
+
         },"heart-pack");
 
         heartbeatThread.setDaemon(true);

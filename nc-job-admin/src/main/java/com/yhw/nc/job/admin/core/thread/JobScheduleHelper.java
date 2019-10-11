@@ -36,7 +36,7 @@ public class JobScheduleHelper implements InitializingBean, DisposableBean {
     private volatile static Map<Integer, List<Integer>> ringData = new ConcurrentHashMap<>();
 
     public void start() throws Exception{
-        Thread.sleep(PRE_READ_MS*6);
+        //Thread.sleep(PRE_READ_MS*6);
         // schedule thread
         scheduleThread = new Thread(new Runnable() {
             @Override
