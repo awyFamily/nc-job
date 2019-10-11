@@ -41,7 +41,7 @@ public class GroupMonitorHelper implements InitializingBean, DisposableBean {
             while (!monitorThreadStop){
 
                 try{
-                    LocalDateTime now = LocalDateTime.now().withMinute(defaultMonitorTime);
+                    LocalDateTime now = LocalDateTime.now().plusMinutes(-defaultMonitorTime);
                     List<NcJobGroup> result = jobGroupMapper.selectList(Wrappers.<NcJobGroup>lambdaQuery().eq(NcJobGroup::getHasAvailable,true).lt(NcJobGroup::getUpdateTime,now));
 
                     if(CollectionUtil.isNotEmpty(result)){
