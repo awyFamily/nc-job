@@ -42,6 +42,7 @@ public class NcJobTrigger {
         try{
             NcJobGroup jobGroup = NcJobAdminConfig.getAdminConfig().getJobGroupService().getById(jobInfo.getJobGroupId());
             Assert.isFalse(jobGroup == null , "group not exists ");
+            Assert.isTrue(jobGroup.getHasAvailable(),"current job group service is no available");
             AdminConsumerDTO dto = new AdminConsumerDTO(jobGroup.getName(),jobInfo.getId(),jobInfo.getExecutorParam());
             apiResult = runExecutor(jobGroup.getServerId(), dto, routerEum);
             //如果调用成功，则记录调用成功

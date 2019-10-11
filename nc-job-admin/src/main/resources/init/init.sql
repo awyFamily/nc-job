@@ -24,6 +24,7 @@ DROP TABLE `nc_job_group`;
 CREATE TABLE `nc_job_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server_id` varchar(64) NOT NULL COMMENT '执行器主键ID',
+  `has_available` TINYINT(1) DEFAULT '1' COMMENT '是否可用， 0-不可以 1-可用',
   `name` varchar(64) NOT NULL COMMENT 'task名称和serverId组成唯一约束',
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,

@@ -23,6 +23,11 @@ public class NcJobGroup {
      */
     private String name;
 
+    /**
+     * handler是否可用
+     */
+    private Boolean hasAvailable;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
@@ -32,5 +37,6 @@ public class NcJobGroup {
     public NcJobGroup(String serverId,String name){
         this.serverId = serverId;
         this.name = name;
+        this.hasAvailable = true;
     }
 }

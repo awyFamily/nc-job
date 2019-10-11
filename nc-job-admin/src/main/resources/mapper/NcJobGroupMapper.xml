@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhw.nc.job.admin.mapper.NcJobGroupMapper">
+
+
+    <!-- 批量更新第二种方法，通过 case when语句变相的进行批量更新 -->
+    <update id="updateBatchHasAvailable" parameterType="com.yhw.nc.job.admin.core.model.dto.UpdateGroupHasAvailableDTO">
+            update nc_job_group
+            SET
+                has_available = #{dto.hasAvailable},
+                update_time = #{dto.updateTime}
+            where
+                id in
+            <foreach collection="dto.ids" separator="," open="(" close=")" item="id" index="index" >
+                id = #{id}
+            </foreach>
+    </update>
+
+</mapper>
