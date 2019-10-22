@@ -15,6 +15,11 @@ public class NcJobInfo {
     private Integer id;
 
     /**
+     * 任务名称
+     */
+    private String jobName;
+
+    /**
      * 执行器主键ID
      */
     private Integer jobGroupId;

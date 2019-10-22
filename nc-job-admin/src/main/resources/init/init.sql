@@ -1,6 +1,7 @@
 DROP TABLE `nc_job_info`;
 CREATE TABLE `nc_job_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `job_name` varchar(32)  NOT NULL DEFAULT '' COMMENT '任务名称',
   `job_group_id` int(11) NOT NULL COMMENT '执行器主键ID',
   `job_cron` varchar(128) DEFAULT NULL  COMMENT '任务执行CRON',
   `job_desc` varchar(255)  NULL DEFAULT '',
@@ -15,8 +16,8 @@ CREATE TABLE `nc_job_info` (
   `update_by` varchar(32)  NULL DEFAULT '' COMMENT '修改时间',
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
-	`has_delete` tinyint(1) DEFAULT '0' COMMENT '逻辑删除 0-正常 1-删除',
-	`remarks` varchar(255) DEFAULT '' COMMENT '备注',
+  `has_delete` tinyint(1) DEFAULT '0' COMMENT '逻辑删除 0-正常 1-删除',
+  `remarks` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
