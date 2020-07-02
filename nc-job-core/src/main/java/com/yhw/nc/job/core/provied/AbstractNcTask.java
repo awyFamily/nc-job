@@ -1,14 +1,20 @@
 package com.yhw.nc.job.core.provied;
 
+import cn.hutool.core.date.DatePattern;
 import com.yhw.nc.job.api.constants.JobCommonConstant;
 import com.yhw.nc.job.api.dto.CallbackDTO;
 import com.yhw.nc.job.core.config.JobConfig;
+import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 任务实现基类类
  * @author yhw
  * @date 2019-09-30
  */
+@Slf4j
 public abstract class AbstractNcTask {
 
     /**
@@ -27,6 +33,7 @@ public abstract class AbstractNcTask {
 
     public void callBackAdmin(Integer jobId, String parameter){
         try {
+            log.info("开始执行：".concat(getName()).concat(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN))));
             run(jobId,parameter);
             //response executor success
             callbackRequest(true, JobCommonConstant.TASK_EXECUTOR_REMARK,jobId);

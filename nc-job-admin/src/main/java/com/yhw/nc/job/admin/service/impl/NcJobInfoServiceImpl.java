@@ -3,10 +3,13 @@ package com.yhw.nc.job.admin.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yhw.nc.job.admin.core.cron.CronExpression;
 import com.yhw.nc.job.admin.core.model.NcJobInfo;
 import com.yhw.nc.job.admin.core.model.dto.NcJobInfoDTO;
+import com.yhw.nc.job.admin.core.model.dto.NcJobInfoQueryDTO;
 import com.yhw.nc.job.admin.core.thread.JobTriggerPoolHelper;
 import com.yhw.nc.job.admin.core.trigger.TriggerTypeEnum;
 import com.yhw.nc.job.admin.mapper.NcJobInfoMapper;
@@ -18,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author yhw
+ */
 @Service
 public class NcJobInfoServiceImpl extends ServiceImpl<NcJobInfoMapper, NcJobInfo> implements INcJobInfoService {
 
@@ -32,9 +38,12 @@ public class NcJobInfoServiceImpl extends ServiceImpl<NcJobInfoMapper, NcJobInfo
                         .getNextValidTimeAfter(new Date())
                         .getTime();
                 ncJobInfo.setTriggerNextTime(triggerNextTime);
+                ncJobInfo.setTriggerStatus(0);
             }catch (Exception e){
                 throw new RuntimeException("cron 表达式错误!");
             }
+        }else {
+            ncJobInfo.setTriggerStatus(2);
         }
         this.save(ncJobInfo);
         return ncJobInfo.getId();
@@ -55,19 +64,30 @@ public class NcJobInfoServiceImpl extends ServiceImpl<NcJobInfoMapper, NcJobInfo
                         .getNextValidTimeAfter(new Date())
                         .getTime();
                 jobInfo.setTriggerNextTime(triggerNextTime);
+                jobInfo.setTriggerStatus(0);
             }catch (Exception e){
                 throw new RuntimeException("cron 表达式错误!");
             }
+        }
+        if(StrUtil.isEmpty(dto.getJobCron())){
+            jobInfo.setTriggerStatus(2);
         }
         this.updateById(jobInfo);
         return true;
     }
 
     @Override
+    public IPage<NcJobInfo> getAll(NcJobInfoQueryDTO dto) {
+        return this.page(new Page<>(dto.getCurrent(),dto.getSize()));
+    }
+
+    @Override
     public boolean updateCallback(CallbackDTO callbackDTO) {
         NcJobInfo jobInfo = this.getById(callbackDTO.getJobId());
         Assert.isFalse(jobInfo == null,"job not exists");
-        jobInfo.setTriggerStatus(0);
+        if(jobInfo.getTriggerStatus() != 2 ){
+            jobInfo.setTriggerStatus(0);
+        }
         this.updateById(jobInfo);
         return true;
     }
@@ -81,8 +101,10 @@ public class NcJobInfoServiceImpl extends ServiceImpl<NcJobInfoMapper, NcJobInfo
         return true;
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     @Override
     public boolean deletes(List<Integer> ids) {
-        return false;
+        this.removeByIds(ids);
+        return true;
     }
 }

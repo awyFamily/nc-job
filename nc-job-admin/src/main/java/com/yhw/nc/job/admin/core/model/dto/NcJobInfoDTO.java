@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @ApiModel(value = "新增任务模型")
@@ -13,11 +14,16 @@ public class NcJobInfoDTO {
     @ApiModelProperty(value = "主键ID")
     private Integer id;
 
+
+    @NotEmpty
+    @ApiModelProperty(value = "任务名称",required = true)
+    private String jobName;
+
     /**
      * 执行器主键ID
      */
     @NotNull
-    @ApiModelProperty(value = "执行器主键ID")
+    @ApiModelProperty(value = "执行器主键ID,通过接口获取",required = true)
     private int jobGroupId;
 
     /**
@@ -53,3 +59,4 @@ public class NcJobInfoDTO {
     @ApiModelProperty(value = "失败重试次数")
     private int executorFailRetryCount;
 }
+

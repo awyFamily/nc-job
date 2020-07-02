@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yhw.nc.job.admin.mapper.NcJobGroupMapper">
+
+    <resultMap id="NcJobGroupMap" type="com.yhw.nc.job.admin.core.model.NcJobGroup">
+        <id column="id" property="id"/>
+        <result column="serverId" property="serverId"/>
+        <result column="name" property="name"/>
+        <result column="hasAvailable" property="hasAvailable"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+
+    <sql id="selectAll">
+        njg.id id,
+        njg.server_id serverId,
+        njg.`name` `name`,
+        njg.has_available hasAvailable,
+        njg.create_time createTime,
+        njg.update_time updateTime
+    </sql>
+
+
+    <select id="getByUpdateTimeAndHasAvailable" resultMap="NcJobGroupMap">
+        SELECT
+        <include refid="selectAll"/>
+        FROM
+        nc_job_group  njg
+        <where>
+            <if test="hasAvailable == true ">
+                njg.has_available = 1
+            </if>
+            <if test="!hasAvailable == false ">
+                AND njg.has_available = 0
+            </if>
+            <if test="updateTime != null and updateTime != '' ">
+                AND njg.update_time &lt; #{updateTime}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 批量更新第二种方法，通过 case when语句变相的进行批量更新 -->
+    <update id="updateBatchHasAvailable" parameterType="com.yhw.nc.job.admin.core.model.dto.UpdateGroupHasAvailableDTO">
+            UPDATE nc_job_group
+            SET
+                has_available = #{dto.hasAvailable},
+                update_time = #{dto.updateTime}
+            WHERE
+                id IN
+            <foreach collection="dto.ids" separator="," open="(" close=")" item="id" index="index" >
+                id = #{id}
+            </foreach>
+    </update>
+
+</mapper>

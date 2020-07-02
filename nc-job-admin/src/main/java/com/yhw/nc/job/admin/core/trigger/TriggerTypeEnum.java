@@ -4,6 +4,9 @@ package com.yhw.nc.job.admin.core.trigger;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * trigger type enum
  *
@@ -18,10 +21,19 @@ public enum TriggerTypeEnum {
     RETRY(2,"失败重试触发"),
     API(3,"API触发");
 
-    private TriggerTypeEnum(String title){
-        this.title = title;
-    }
     private Integer type;
     private String title;
 
+    private static Map<Integer,TriggerTypeEnum> repository;
+
+    static {
+        repository = new HashMap<>();
+        for (TriggerTypeEnum typeEnum : TriggerTypeEnum.values()) {
+            repository.put(typeEnum.getType(),typeEnum);
+        }
+    }
+
+    public static TriggerTypeEnum getType(Integer code){
+        return repository.get(code);
+    }
 }

@@ -1,10 +1,12 @@
 package com.yhw.nc.job.core.config;
 
+import com.yhw.nc.job.api.constants.CommonConstant;
 import com.yhw.nc.job.api.dto.RegistryDTO;
 import com.yhw.nc.job.api.feign.IJobAdminCallback;
 import com.yhw.nc.job.core.provied.AbstractNcTask;
 import com.yhw.nc.job.core.provied.NcTaskManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 /**
@@ -23,7 +26,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Component
-public class InitRegistry implements ApplicationListener<ApplicationReadyEvent> {
+public class InitRegistry implements ApplicationListener<ApplicationReadyEvent>, DisposableBean {
 
     @Resource
     private  JobProviderPreperties jobProviderPreperties;
@@ -33,6 +36,10 @@ public class InitRegistry implements ApplicationListener<ApplicationReadyEvent> 
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    private Thread heartbeatThread;
+
+    private volatile Boolean heartbeatThreadStop = false;
 
     private void initCommand(){
         try{
@@ -52,18 +59,88 @@ public class InitRegistry implements ApplicationListener<ApplicationReadyEvent> 
         }
     }
 
+    private void registry(String jobServerId){
+        RegistryDTO registryDTO = new RegistryDTO(jobServerId, NcTaskManager.getInstance().getNames());
+        jobAdminCallback.registry(registryDTO);
+    }
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task beign");
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task begin");
         try{
             initCommand();
             String jobServerId = jobProviderPreperties.getJobServerId();
-            RegistryDTO registryDTO = new RegistryDTO(jobServerId, NcTaskManager.getInstance().getNames());
-            jobAdminCallback.registry(registryDTO);
+            if(jobServerId == null || jobServerId.isEmpty()){
+                throw new RuntimeException("nc.job.provider.jobServerId  can not be empty");
+            }
+
+            registry(jobServerId);
+
+            startHeartbeat();
+
             log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task  success ");
+
+
         }catch (Exception e){
             log.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task  error ",e);
+            System.exit(0);
         }
         log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registry task end");
     }
+
+    private void startHeartbeat(){
+
+        heartbeatThread = new Thread(() -> {
+
+            log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> heartbeat task begin");
+
+            while (!heartbeatThreadStop){
+                sleepTime(TimeUnit.MINUTES, CommonConstant.DEFAULT_EXECUTOR_HEARTBEAT_TIME);
+
+                String jobServerId = jobProviderPreperties.getJobServerId();
+
+                try{
+                    registry(jobServerId);
+                    log.info("heartbeat send success ");
+                }catch (Exception e){
+                    log.error("heartbeat send error ",e);
+                }
+
+            }
+
+            log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> heartbeat task end");
+
+        },"heart-pack");
+
+        heartbeatThread.setDaemon(true);
+        heartbeatThread.start();
+
+    }
+
+
+    @Override
+    public void destroy() throws Exception {
+        this.heartbeatThreadStop = true;
+
+        sleepTime(TimeUnit.SECONDS,1);
+
+        if (heartbeatThread.getState() != Thread.State.TERMINATED){
+            // interrupt and wait
+            heartbeatThread.interrupt();
+            try {
+                heartbeatThread.join();
+            } catch (InterruptedException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void sleepTime(TimeUnit timeUnit,long time){
+        try {
+            timeUnit.sleep(time);
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
 }

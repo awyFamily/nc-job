@@ -19,4 +19,14 @@ public interface CommonConstant {
      */
     Integer RESPONSE_TIMEOUT = 502;
 
+    /**
+     * admin 监听时间 分钟
+     */
+    Integer DEFAULT_ADMIN_MONITOR_TIME = 5;
+
+    /**
+     * 执行器心态请求时间 分钟
+     */
+    Integer DEFAULT_EXECUTOR_HEARTBEAT_TIME = 3;
+
 }
