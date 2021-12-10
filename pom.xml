@@ -26,7 +26,7 @@
         <hutool.version>4.5.10</hutool.version>
         <lombok.version>1.18.6</lombok.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.13.3</log4j.version>
+        <log4j.version>2.15.0</log4j.version>
         <project.sourceEncoding>UTF-8</project.sourceEncoding>
         <org.apache.maven.plugins.version>3.8.0</org.apache.maven.plugins.version>
         <docker.plugins.version>1.2.0</docker.plugins.version>
